@@ -190,8 +190,8 @@ function &dvwaPageNewGrab() {
 
 
 function dvwaThemeGet() {
-	if (isset($_COOKIE['theme'])) {
-		return $_COOKIE[ 'theme' ];
+	if (isset($_COOKIE['theme']) && $_COOKIE['theme'] === 'dark') {
+		return 'dark';
 	}
 	return 'light';
 }
@@ -202,7 +202,11 @@ function dvwaSecurityLevelGet() {
 
 	// If there is a security cookie, that takes priority.
 	if (isset($_COOKIE['security'])) {
-		return $_COOKIE[ 'security' ];
+		$securityLevels = array('low', 'medium', 'high', 'impossible');
+		$key = array_search($_COOKIE['security'], $securityLevels, true);
+		if ($key !== false) {
+			return $securityLevels[$key];
+		}
 	}
 
 	// If not, check to see if authentication is disabled, if it is, use
@@ -509,7 +513,7 @@ function dvwaSourceHtmlEcho( $pPage ) {
 
 	</head>
 
-	<body class=\"" . dvwaThemeGet() . "\">
+	<body class=\"" . htmlspecialchars( dvwaThemeGet(), ENT_QUOTES, 'UTF-8' ) . "\">
 
 		<div id=\"container\">
 
